@@ -5,8 +5,11 @@ ARG DATABASE_URL
 
 WORKDIR /calcom
 
+# Install necessary packages for ARM64 compatibility
+RUN apk add --no-cache libc6-compat
 RUN set -eux;
-RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
+# Check if libssl.so.3 exists before creating symlink
+RUN if [ -f /usr/lib/libssl.so.3 ] && [ ! -f /lib/libssl.so.3 ]; then ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3; fi
 
 ENV NODE_ENV="production"
 ENV NODE_OPTIONS="--max-old-space-size=8192"
